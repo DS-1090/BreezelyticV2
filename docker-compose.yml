@@ -1,0 +1,95 @@
+
+services:
+#django app container to manage API calls, middleware to comm with spark, redis, kafka
+  django:
+    image: djangocont:latest
+    container_name: djangocont
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    networks:
+      - airnet
+    ports:
+      - "8000:8000"
+    volumes:
+      - D:/MajorProject/Breezelytics2/Backend/fetchData:/app
+
+#spark container to process records, master and worker nodes
+  sparkcont:
+    image: bitnami/spark:latest
+    container_name: sparkcont
+    command: ["/opt/bitnami/spark/bin/spark-class", "org.apache.spark.deploy.master.Master", "--host", "sparkcont"]
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+    environment:
+      - SPARK_CONF_DIR=/opt/bitnami/spark/conf
+      - SPARK_RPC_MESSAGE_MAX_SIZE=512m    
+      - SPARK_NETWORK_TIMEOUT=600s
+    volumes:
+      - D:/MajorProject/Breezelytics2/Backend/fetchData:/app/data
+    networks:
+      - airnet
+
+  sparkworkercont:
+    image: bitnami/spark:latest
+    container_name: sparkworkercont
+    command: ["/opt/bitnami/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://sparkcont:7077"]
+    depends_on:
+      - sparkcont
+    networks:
+      - airnet
+
+#redis to store current aqi data
+  rediscont:
+    image: redis:latest
+    container_name: rediscont
+    ports:
+      - "6379:6379"
+    networks:
+      - airnet
+
+#kafka container to manage data streaming, pub sub model
+  kafkacont:
+    image: bitnami/kafka:latest
+    container_name: kafkacont
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafkacont:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafkacont:9092,EXTERNAL://localhost:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_MESSAGE_MAX_BYTES=1195725860
+    ports:
+      - "9094:9094"
+      - "9092:9092"
+    networks:
+      - airnet
+
+#kafka consumer to consume data from kafka and store in redis
+  kafka_consumer:
+    image: kafkaconsumer:latest
+    container_name: kafka_consumer
+    command: ["python", "kafka_consumer.py"]  
+    depends_on:
+      - kafkacont
+      - rediscont
+    networks:
+      - airnet
+    volumes:
+      - D:/MajorProject/Breezelytics2/Backend/kafkaConsumer:/app
+
+#network to connect all containers
+networks:
+  airnet:
+    driver: bridge
+
+# PS D:\MajorProject\Breezelytics2> docker compose up -d
+# [+] Running 7/7
+#  ✔ Network breezelytics2_airnet  Created                                                                                                  0.4s 
+#  ✔ Container kafkacont           Started                                                                                                  2.2s 
+#  ✔ Container djangocont          Started                                                                                                  2.2s 
+#  ✔ Container sparkcont           Started                                                                                                  2.2s 
+#  ✔ Container rediscont           Started                                                                                                  2.2s 
+#  ✔ Container sparkworkercont     Started                                                                                                  2.3s 
+#  ✔ Container kafka_consumer      Started   

@@ -1,0 +1,528 @@
+//USE PY 3.11 VERSION ONLY, 3.12 DOESNT SUPPORT SOME DEPENDENCY REQ BY CASSANDRA-DRIVER
+
+py-0 to list out the versions
+
+py -3.11 -m venv venv
+
+//DOCKER ASSIGNS NEW IP EVERYTIME A CONTAINER STARTS
+
+//packages to be installed: requests, cassandra-driver, django
+use this to store packages: pip freeze > requirements.txt 
+
+
+to create a django file
+create virtual env: python -m venv envname
+ activate it: environmentname: venv/scripts/activate
+install django: pip install Django 
+create a project: django-admin startproject projectname
+navigate to the project: cd projectname
+run the server: python manage.py runserver
+create an app: python manage.py startapp appname
+
+
+//CASSANDRA
+install cassandra-driver: 
+"Cassandra driver for Python" is a software library that allows Python applications to interact with and access data stored in 
+an Apache Cassandra database, enabling you to perform operations like reading, writing, and
+ querying data within your Python code by sending commands to the Cassandra server using the Cassandra Query Language (CQL) directly.  
+
+use this to fetch IPAddress of the container
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container_id> 
+
+run this to open cassandra shell
+docker exec -it containername cqlsh            =  docker exec -it cassdb cqlsh -u cassandra -p cassandra
+DESCRIBE KEYSPACES;
+USE keyspaceName;
+DESCRIBE TABLES;
+
+
+
+PS D:\MajorProject\fullstackProject\fetch data using django> docker exec -it cassdb cqlsh -u cassandra -p cassandra
+
+Warning: Using a password on the command line interface can be insecure.
+Recommendation: use the credentials file to securely provide the password.
+
+Connected to My Cluster at 127.0.0.1:9042
+[cqlsh 6.2.0 | Cassandra 5.0.3 | CQL spec 3.4.7 | Native protocol v5]
+Use HELP for help.
+cassandra@cqlsh> use aqdata
+   ... ;
+cassandra@cqlsh:aqdata> describe tables;
+
+pm25
+
+cassandra@cqlsh:aqdata> select * from pm25;
+
+ date       | avg_pm25 | location                                                     | max_pm25 | min_pm25
+------------+----------+--------------------------------------------------------------+----------+----------
+ 2025-03-04 |      123 | Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास) |      159 |       89
+ 2025-03-07 |      111 | Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास) |      138 |       89
+ 2025-03-05 |      115 | Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास) |      138 |       89
+ 2025-03-01 |      138 | Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास) |      138 |      132
+ 2025-03-08 |      131 | Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास) |      138 |       89
+ 2025-03-03 |      138 | Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास) |      138 |      138
+ 2025-03-06 |       89 | Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास) |       95 |       68
+ 2025-03-02 |      138 | Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास) |      138 |      138
+ 2025-02-28 |      139 | Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास) |      158 |      138
+
+(9 rows)
+
+
+
+//NOTES
+Apache cassandra is a nosql, distributed db.
+Cassandra deployments handle massive amounts of structured data and provide high availability with no single point of failure. 
+To achieve this, Cassandra optimizes queries and arranges its smallest logical units, nodes, in a ring architecture formation.
+A Cassandra cluster is a collection of nodes, or Cassandra instances, visualized as a ring.
+
+Given that Apache Cassandra features were architected with horizontal scalability in mind, 
+Cassandra can scale to a theoretically unlimited number of nodes in a cluster, and Cassandra 
+clusters can be geographically dispersed unlike rdms(they do it to ensure C in CAP(consistency)) and
+redis(to ensure low latency),with data exchanged between clusters using multi-datacenter replication.
+
+In Cassandra a node is either a whole physical server, or an allocated portion of a physical server in a virtualized or containerized environment. 
+Each node will have requisite processing power (CPUs), memory (RAM), and storage (usually  as SSDs).
+
+These nodes are organized into clusters. Cassandra clusters can be in physical proximity (such as in the same datacenter), or can be distributed over great geographical distances.
+ To organize clusters into datacenters and then also across different racks (to ensure high availability), Cassandra uses a snitch monitor.
+eventual synchronize between replicated clusters exists.
+
+Within a Cassandra cluster, there is no central primary (or master) node. All nodes in the cluster are peers. 
+There are mechanisms, such as the Gossip protocol to determine when the cluster is first started for nodes to discover each other.
+This same Gossip mechanism helps to determine when additional nodes are added to the cluster, or when nodes are removed from the cluster
+
+keyspace= database
+
+
+
+
+SPARK
+>docker run -d --name sparkapp -p 7077:7077 -p 8080:8080 bitnami/spark:latest
+db8346de9ab4c283974e7c2dc172183eb263e6377b51941bac3f71e1576b39eb
+ 
+ 
+
+DOCKER COMPOSE USE, NOT NETWORK AS-
+It automatically manages networking.
+Containers can talk to each other using service names.
+It's easy to manage, scale, and deploy.
+
+IN DOCKER NTW, CONTAINERS MUST BE INDIVIDUALLY STARTED, IP ADDRESSES MUST BE CHANGED EVERYTIME 
+
+
+
+
+"date","avg_pm25","location","max_pm25","min_pm25"
+"2025-03-04","124","Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास)","138","89"
+"2025-03-10","89","Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास)","89","89"
+"2025-03-07","96","Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास)","122","68"
+"2025-03-05","118","Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास)","138","89"
+"2025-03-08","115","Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास)","138","89"
+"2025-03-03","138","Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास)","138","138"
+"2025-03-09","114","Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास)","138","89"
+"2025-03-06","87","Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास)","89","68"
+"2025-03-02","138","Hyderabad US Consulate, India (हैदराबाद अमेरिकी वाणिज्य दूतावास)","138","138"
+
+
+
+//KAFKA
+It is a message queue capable of handling huge data, super scalable, has immutable commit log, realtime processing
+has permanent storage, fault tolerant
+uses pub-sub model
+processing also can be done like filtering, joins
+Kafka remedies the two different models by publishing records to different topics. Each topic has a partitioned log, which is a structured commit log that keeps track of all records in order and appends new ones in real time. These partitions are distributed and replicated across multiple servers, allowing for high scalability, fault-tolerance, and parallelism. Each consumer is assigned a partition in the topic, which allows for multi-subscribers while maintaining the order of the data. By combining these messaging models, Kafka offers the benefits of both. Kafka also acts as a very scalable and fault-tolerant storage system by writing and replicating all data to disk. By default, Kafka keeps data stored on disk until it runs out of space, but the user can also set a retention limit. Kafka has four APIs:
+
+Producer API: used to publish a stream of records to a Kafka topic.
+Consumer API: used to subscribe to topics and process their streams of records.
+Streams API: enables applications to behave as stream processors, which take in an input stream from topic(s) and transform it to an output stream which goes into different output topic(s).
+Connector API: allows users to seamlessly automate the addition of another application or data system to their current Kafka topics.
+
+https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.projectpro.io%2Farticle%2Fapache-kafka-architecture-%2F442&psig=AOvVaw0R6-_Rjq419qpm4ZzYUfvL&ust=1741532181249000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCKCxt4_f-osDFQAAAAAdAAAAABAE
+
+
+Core Components of Kafka Architecture
+Kafka Cluster: A Kafka cluster is a distributed system composed of multiple Kafka brokers working together to handle the storage and processing of real-time streaming data. It provides fault tolerance, scalability, and high availability for efficient data streaming and messaging in large-scale applications.
+Brokers: Brokers are the servers that form the Kafka cluster. Each broker is responsible for receiving, storing, and serving data. They handle the read and write operations from producers and consumers. Brokers also manage the replication of data to ensure fault tolerance.
+Topics and Partitions: Data in Kafka is organized into topics, which are logical channels to which producers send data and from which consumers read data. Each topic is divided into partitions, which are the basic unit of parallelism in Kafka. Partitions allow Kafka to scale horizontally by distributing data across multiple brokers.
+Producers: Producers are client applications that publish (write) data to Kafka topics. They send records to the appropriate topic and partition based on the partitioning strategy, which can be key-based or round-robin.
+Consumers: Consumers are client applications that subscribe to Kafka topics and process the data. They read records from the topics and can be part of a consumer group, which allows for load balancing and fault tolerance. Each consumer in a group reads data from a unique set of partitions.
+ZooKeeper: ZooKeeper is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services. In Kafka, ZooKeeper is used to manage and coordinate the Kafka brokers. ZooKeeper is shown as a separate component interacting with the Kafka cluster.
+Offsets : Offsets are unique identifiers assigned to each message in a partition. Consumers will use these offsets to track their progress in consuming messages from a topic.
+
+
+ How Kafka Partitions Work?
+A Kafka topic is divided into multiple partitions, allowing parallelism and load balancing.
+
+✅ Each message in a topic is stored in one partition.
+✅ Each partition is stored on one Kafka broker (node).
+✅ Different consumers can read from different partitions simultaneously.
+
+Kafka replicates partitions across multiple brokers to ensure data availability and durability.
+
+✅ Each partition has a "Leader" and multiple "Followers" (replicas).
+✅ Leader handles all read/write requests; Followers sync data from the leader.
+✅ If a leader broker fails, a follower automatically takes over.
+Kafka uses a partitioner strategy to distribute data:
+
+Round-robin (Default for no key): Evenly distributes messages to partitions.
+Key-based hashing: Messages with the same key go to the same partition.
+Custom partitioner: User-defined logic for partitioning.
+
+
+REDIS
+
+Redis (Remote Dictionary Server) is an open-source, in-memory data structure store that is widely used as a database, cache, and message broker. 
+1. What is Redis?
+Redis is an ultra-fast key-value store that operates primarily in memory, making it significantly faster than traditional disk-based databases. It supports a variety of data structures and is commonly used for caching, real-time analytics, pub/sub messaging, and as a primary or secondary database.
+
+2. Key Features of Redis
+In-Memory Storage: Redis stores data in RAM, enabling microsecond response times.
+Persistence Options: Supports RDB (point-in-time snapshots) and AOF (Append-Only File) for durability.
+Data Structures: Redis is not just a key-value store; it supports complex data structures.
+Replication: Master-slave replication ensures high availability.
+High Performance: Handles millions of requests per second.
+Clustering: Supports horizontal scaling via Redis Cluster.
+Pub/Sub Messaging: Enables real-time communication between services.
+Atomic Operations: All operations in Redis are atomic.
+Transactions & Lua Scripting: Enables multi-step operations with consistency.
+Security: Supports authentication, access control lists (ACLs), and encryption.
+
+3. Data Structures Supported by Redis
+Strings: Basic text or binary data.
+Lists: Ordered sequences of strings.
+Sets: Unordered collections of unique values.
+Sorted Sets (Zsets): Similar to sets but with a ranking.
+Hashes: Key-value pairs within a key.
+Bitmaps: Bit-level operations on strings.
+HyperLogLogs: Probabilistic data structure for counting unique elements.
+Streams: Log-like data structure for event storage.
+
+4. Persistence in Redis
+Redis provides different methods for data persistence:
+RDB (Redis Database File): Takes snapshots of data at intervals.
+AOF (Append-Only File): Logs every write operation for durability.
+Hybrid Mode: Combines RDB and AOF for optimal performance.
+
+5. Redis Clustering & High Availability
+Replication: Redis supports master-replica replication for redundancy.
+Redis Sentinel: Provides monitoring, automatic failover, and notifications.
+Redis Cluster: Enables automatic sharding and fault tolerance across multiple nodes.
+
+6. Redis Use Cases
+Caching: Speeds up application performance by storing frequently accessed data.
+Session Management: Stores user sessions for web applications.
+Leaderboards: Sorted sets help in ranking systems.
+Rate Limiting: Controls API request rates efficiently.
+Pub/Sub Messaging: Enables real-time event-driven applications.
+Queue Processing: Acts as a message queue system.
+Real-time Analytics: Used for processing large-scale data streams.
+
+7. Redis Performance Optimization Tips
+Use Connection Pooling: Reduces overhead of creating new connections.
+Optimize Data Structures: Choose the right data type for efficient memory use.
+Use Pipelining: Sends multiple commands in a single request to reduce latency.
+Eviction Policies: Use LRU (Least Recently Used) and LFU (Least Frequently Used) for cache eviction.
+Persistent Tuning: Optimize RDB and AOF settings for the right balance between performance and durability.
+
+8. Security Best Practices
+Enable Authentication: Use passwords and ACLs.
+Disable Remote Access: Restrict access to Redis instances.
+Use TLS Encryption: Secure data transmission.
+IP Whitelisting: Allow only trusted sources.
+Run Redis as a Non-Root User: Minimizes security risks.
+
+9. Redis Alternatives & Comparisons
+Memcached: Similar but lacks persistence and advanced data structures.
+MongoDB: Document-oriented, not in-memory.
+Apache Kafka: Better suited for large-scale message brokering.
+
+10. Redis vs Traditional Databases
+Feature
+Redis
+Traditional Databases (e.g., MySQL, PostgreSQL)
+Speed
+Extremely fast (in-memory)
+Slower (disk-based)
+Data Model
+Key-value, data structures
+Tables and relations
+Persistence
+RDB, AOF
+Fully persistent
+Scaling
+Horizontal (sharding)
+Vertical (scaling up)
+Use Cases
+Caching, real-time data
+Transactional, relational data
+
+
+11. When Not to Use Redis
+When strict ACID compliance is required.
+When data doesn’t fit in memory.
+When complex queries & joins are needed.
+When using disk-based persistence is a priority.
+
+12. How to Install Redis
+On Linux (Ubuntu/Debian)
+sudo apt update
+sudo apt install redis-server
+sudo systemctl enable redis
+sudo systemctl start redis
+
+On macOS (Homebrew)
+brew install redis
+brew services start redis
+
+On Windows
+Redis is not officially supported on Windows, but you can use WSL (Windows Subsystem for Linux) or Docker.
+
+13. Basic Redis Commands
+Working with Strings
+SET key "Hello, Redis!"
+GET key
+
+Lists
+LPUSH mylist "A" "B" "C"
+LRANGE mylist 0 -1
+
+Hashes
+HSET user:1000 name "Alice" age 30
+HGETALL user:1000
+
+Sets
+SADD myset "apple" "banana" "cherry"
+SMEMBERS myset
+
+Sorted Sets
+ZADD leaderboard 100 "player1" 200 "player2"
+ZRANGE leaderboard 0 -1 WITHSCORES
+
+Transactions
+MULTI
+SET key1 "value1"
+SET key2 "value2"
+EXEC
+
+
+14. Redis Clients & Integrations
+Redis supports multiple programming languages:
+Python: redis-py
+Node.js: ioredis, node-redis
+Go: go-redis
+Java: Jedis, Lettuce
+PHP: predis
+.NET: StackExchange.Redis
+
+15. Redis Hosting & Cloud Solutions
+Redis Enterprise: Managed Redis by Redis Labs.
+AWS ElastiCache: Fully managed Redis service.
+Google Memorystore: Google Cloud’s Redis offering.
+Azure Cache for Redis: Microsoft’s managed Redis.
+
+Conclusion
+Redis is an incredibly fast, versatile, and scalable solution for caching, real-time processing, and database needs. While it’s not ideal for every use case, its speed, simplicity, and support for advanced data structures make it a top choice for modern applications.
+
+
+
+
+REDIS AND KAFKA
+
+Redis and Kafka serve different purposes, though there is some overlap in their use cases. Whether you need both or just one depends on your requirements. Let’s break it down:
+
+1. Redis vs Kafka: Key Differences
+Feature
+Redis
+Kafka
+Type
+In-memory data store (key-value)
+Distributed event streaming platform
+
+Persistence
+Optional (RDB, AOF)
+Persistent (stores messages on disk)
+
+Use Case
+Caching, real-time data storage, pub/sub
+Event-driven architecture, message brokering
+
+Performance
+Low latency (<1ms)
+High throughput (millions of events/sec)
+
+Scalability
+Horizontal scaling via sharding
+Distributed and partitioned scaling
+
+Data Retention
+Volatile (unless persisted)
+Retains messages for a configurable period
+
+Ordering
+No strict ordering
+Preserves message order within partitions
+
+Message Replay
+No built-in replay
+Messages can be replayed anytime
+
+Guaranteed Delivery
+Best effort, not durable
+Durable message storage with replication
+
+
+2. When to Use Redis
+Use Redis when:
+You need low-latency, high-speed data access (caching, real-time analytics).
+You need a simple pub/sub messaging system for real-time updates.
+You want temporary storage for fast operations.
+You need session management or short-lived jobs (rate limiting, leaderboards).
+👉 Example Use Cases: Caching API responses, tracking active users, storing ephemeral session data, lightweight messaging.
+
+3. When to Use Kafka
+Use Kafka when:
+You need a durable, distributed message queue.
+You want to replay past messages (Kafka retains event logs).
+You need to process large-scale event streams (real-time data pipelines).
+You want to decouple producers and consumers in microservices.
+👉 Example Use Cases: Log aggregation, real-time analytics, event-driven microservices, data pipelines (ETL).
+
+4. When to Use Both Redis and Kafka
+Many large-scale systems use both Redis and Kafka together:
+Kafka handles event-driven processing and persistent message queuing.
+Redis acts as a fast cache or temporary storage for frequently accessed data.
+👉 Example Architecture:
+Kafka receives events from producers (e.g., user clicks, logs).
+Kafka streams data to multiple consumers (e.g., analytics, machine learning).
+Redis caches frequently needed results to speed up queries.
+Consumers read from Redis for low-latency access, instead of querying Kafka directly.
+🔥 Example Use Case:
+An e-commerce site uses Kafka to process user orders.
+Redis caches real-time order statuses for quick lookups.
+
+Conclusion: Do You Need Both?
+✅ Use Redis if you need ultra-fast, in-memory data storage.
+ ✅ Use Kafka if you need reliable, durable, event-driven messaging.
+ ✅ Use both if you need a combination of real-time processing (Redis) and event-driven pipelines (Kafka).
+
+
+
+Redis Architecture Overview
+Redis follows a client-server architecture with different deployment models depending on performance, availability, and scalability requirements.
+
+1. Basic Redis Architecture (Single Instance)
+In its simplest form, Redis runs as a single-instance server that listens for requests from clients.
+The client sends commands like SET, GET, or HGETALL to the Redis server.
+Redis processes the request in-memory and returns the result.
+This setup is fast but lacks fault tolerance and scalability.
+📌 Use Case: Simple caching, local development.
+
+2. Redis Replication (Master-Slave)
+Redis supports master-replica replication, where:
+The master handles all writes and reads.
+The replicas (slaves) receive a copy of the data from the master asynchronously.
+Clients can read from replicas to balance the load.
+If the master fails, a failover mechanism (like Redis Sentinel) can promote a replica to a new master.
+📌 Use Case: High availability, read scalability.
+🔗 Diagram: Master-Slave Replication
+      Clients
+         │
+  ┌──────▼──────┐
+  │   Master    │ (Handles writes & reads)
+  └──────┬──────┘
+         │
+ ┌───────┴───────────┐
+ │       │           │
+▼       ▼           ▼
+Replica 1  Replica 2  Replica 3 (Read-only)
+
+
+3. Redis Sentinel (High Availability)
+Redis Sentinel is a monitoring and failover system that ensures high availability.
+Monitors Redis instances and automatically promotes a replica if the master fails.
+Notifies clients about changes in topology.
+Can be deployed alongside replication.
+📌 Use Case: Automatic failover in production environments.
+🔗 Diagram: Sentinel-Based Setup
+  Clients
+      │
+┌─────▼──────┐
+│   Sentinel │ (Monitors Master)
+└─────┬──────┘
+      │
+  ┌───▼───┐
+  │ Master │ (Primary Instance)
+  └───┬───┘
+      │
+┌─────┴─────┐
+│  Replica 1 │ (Backup)
+└────────────┘
+
+
+4. Redis Cluster (Sharding & Horizontal Scaling)
+Redis Cluster is a distributed architecture that splits data across multiple nodes.
+Data is divided into slots (0-16383) and distributed across nodes.
+Each node is responsible for a subset of the keyspace.
+Supports automatic failover and load balancing.
+Uses hash slot partitioning to distribute data evenly.
+📌 Use Case: Large-scale applications that require high throughput and fault tolerance.
+🔗 Diagram: Redis Cluster
+          Clients
+              │
+    ┌────────┴────────┐
+    │  Redis Cluster  │
+    └──────┬──────────┘
+  ┌───────┴────────┐
+  │                │
+┌─▼─┐   ┌─▼─┐   ┌─▼─┐
+│ N1 │   │ N2 │   │ N3 │  (Data Shards)
+└────┘   └────┘   └────┘
+
+If Node 1 (N1) fails, a replica takes over automatically.
+This setup provides high availability and scalability.
+
+5. Redis Persistence Mechanisms
+Redis is primarily in-memory, but supports persistence using:
+RDB (Redis Database File): Creates snapshots at intervals.
+AOF (Append-Only File): Logs every write operation for durability.
+Hybrid Mode: Uses both RDB and AOF for best performance.
+📌 Use Case: Ensuring durability while maintaining speed.
+
+Choosing the Right Redis Architecture
+Architecture
+Use Case
+Single Instance
+Simple applications, caching.
+Master-Slave Replication
+Read-heavy workloads, redundancy.
+Sentinel-Based HA
+Automated failover, production environments.
+Redis Cluster
+Large-scale applications, sharding.
+
+
+Conclusion
+Redis provides flexible architecture models depending on performance, fault tolerance, and scalability needs.
+For small apps, a single-instance Redis works fine.
+For redundancy, master-replica replication is useful.
+For auto-failover, Redis Sentinel is essential.
+For large-scale apps, Redis Cluster ensures horizontal scaling.
+
+
+1. Pub/Sub vs. get
+Pub/Sub (Publish/Subscribe):
+
+Pub/Sub is a messaging pattern where one part of your system (the publisher) sends messages, and other parts of the system (the subscribers) can listen for updates in real time.
+Pub/Sub allows for real-time communication and makes it suitable for cases where you want updates as soon as new data is available (e.g., new AQI data from Redis).
+In your case, you're dealing with real-time updates about PM2.5 values, and using Pub/Sub allows you to automatically receive notifications when new data comes in without having to poll or manually request it repeatedly.
+get (HTTP GET Request):
+
+get is a way of requesting data from a server over HTTP. It retrieves data at the moment of the request, and you would need to make another request to get updated data.
+This is a synchronous process, where you must ask for data, wait for the server to respond, and repeat the process if you want fresh data. For real-time updates, this means you'd need to continually call the server (polling), which is inefficient and can lead to performance issues.
+While get is perfectly fine for fetching data when you initially load your app or periodically (e.g., refresh button), it’s not ideal for continuously receiving updates in real-time.
+2. Why use Pub/Sub in your case?
+Since you're trying to get real-time updates of AQI (PM2.5) values from Redis, Pub/Sub fits perfectly for your use case. It allows your app to listen for changes as they happen in real-time without constantly sending requests to the server. This is much more efficient and scales better.
+
+if i use get, it will send a request only when i click on that current data button,
+whereas with pubsub , it automatically fetches updated data, neednt click on button or refresh page 
+

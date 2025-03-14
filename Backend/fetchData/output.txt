@@ -1,0 +1,24 @@
+PS D:\MajorProject\Breezelytics2> docker exec -it kafkacont kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic currentData --from-beginning
+{"status": "ok", "data": {"aqi": 141, "idx": 14125, "attributions": [{"url": "http://cpcb.nic.in/", "name": "CPCB - India Central Pollution Control Board", "logo": "India-CPCB.png"}, 
+{"url": "https://waqi.info/", "name": "World Air Quality Index Project"}], "city": {"geo": [17.417094, 78.457437], "name": "Somajiguda, Hyderabad, India", "url": "https://aqicn.org/city/india/hyderabad/somajiguda", "location": ""}, 
+"dominentpol": "pm25", "iaqi": {"co": {"v": 7.5}, "h": {"v": 42.53}, "no2": {"v": 8.5}, "o3": {"v": 8.7}, "p": {"v": 1009.9}, "pm10": {"v": 64}, "pm25": {"v": 141}, "so2": {"v": 4.3}, "t": {"v": -19.6}, "w": {"v": 0.44999999999999996}, "wg": {"v": 53}}, 
+"time": {"s": "2025-03-14 23:00:00", "tz": "+05:30", "v": 1741993200, "iso": "2025-03-14T23:00:00+05:30"}, "forecast": {"daily": {"o3": [{"avg": 15, "day": "2025-03-12", "max": 41, "min": 2}, {"avg": 16, "day": "2025-03-13", "max": 36, "min": 8}, 
+{"avg": 18, "day": "2025-03-14", "max": 34, "min": 13}, {"avg": 19, "day": "2025-03-15", "max": 34, "min": 11}, {"avg": 20, "day": "2025-03-16", "max": 31, "min": 14}, {"avg": 20, "day": "2025-03-17", "max": 31, "min": 8}, {"avg": 20, "day": "2025-03-18", "max": 41, "min": 4},
+ {"avg": 18, "day": "2025-03-19", "max": 18, "min": 12}], "pm10": [{"avg": 58, "day": "2025-03-12", "max": 60, "min": 58}, {"avg": 50, "day": "2025-03-13", "max": 58, "min": 46}, {"avg": 46, "day": "2025-03-14", "max": 46, "min": 46}, {"avg": 46, "day": "2025-03-15", "max": 46, "min": 46}, 
+ {"avg": 46, "day": "2025-03-16", "max": 46, "min": 46}, {"avg": 46, "day": "2025-03-17", "max": 46, "min": 43}, {"avg": 47, "day": "2025-03-18", "max": 50, "min": 46}, {"avg": 44, "day": "2025-03-19", "max": 46, "min": 32}, {"avg": 43, "day": "2025-03-20", "max": 46, "min": 31}], "pm25":
+  [{"avg": 144, "day": "2025-03-12", "max": 159, "min": 138}, {"avg": 138, "day": "2025-03-13", "max": 138, "min": 138}, {"avg": 138, "day": "2025-03-14", "max": 138, "min": 138}, {"avg": 138, "day": "2025-03-15", "max": 138, "min": 138}, {"avg": 126, "day": "2025-03-16", "max": 138, "min": 89}, 
+  {"avg": 133, "day": "2025-03-17", "max": 138, "min": 94}, {"avg": 138, "day": "2025-03-18", "max": 138, "min": 138}, {"avg": 118, "day": "2025-03-19", "max": 138, "min": 89}, {"avg": 110, "day": "2025-03-20", "max": 138, "min": 89}], "uvi": [{"avg": 3, "day": "2025-03-12", "max": 11, "min": 0},
+   {"avg": 3, "day": "2025-03-13", "max": 10, "min": 0}, {"avg": 3, "day": "2025-03-14", "max": 9, "min": 0}, {"avg": 3, "day": "2025-03-15", "max": 11, "min": 0}, {"avg": 3, "day": "2025-03-16", "max": 11, "min": 0}, {"avg": 3, "day": "2025-03-17", "max": 11, "min": 0}, {"avg": 3, "day": "2025-03-18", "max": 11, "min": 0}, 
+   {"avg": 0, "day": "2025-03-19", "max": 0, "min": 0}]}}, "debug": {"sync": "2025-03-15T02:33:36+09:00"}}}
+^CProcessed a total of 1 messages
+
+
+PS D:\MajorProject\Breezelytics2> docker exec -it kafkacont kafka-topics.sh --bootstrap-server kafkacont:9092 --list
+__consumer_offsets
+currentData
+
+
+PS D:\MajorProject\Breezelytics2> docker exec -it rediscont redis-cli
+127.0.0.1:6379> KEYS *
+1) "Somajiguda, Hyderabad, India"
+127.0.0.1:6379>
