@@ -513,15 +513,10 @@ Pub/Sub (Publish/Subscribe):
 
 Pub/Sub is a messaging pattern where one part of your system (the publisher) sends messages, and other parts of the system (the subscribers) can listen for updates in real time.
 Pub/Sub allows for real-time communication and makes it suitable for cases where you want updates as soon as new data is available (e.g., new AQI data from Redis).
-In your case, you're dealing with real-time updates about PM2.5 values, and using Pub/Sub allows you to automatically receive notifications when new data comes in without having to poll or manually request it repeatedly.
+using Pub/Sub allows you to automatically receive notifications when new data comes in without having to poll or manually request it repeatedly.
 get (HTTP GET Request):
 
 get is a way of requesting data from a server over HTTP. It retrieves data at the moment of the request, and you would need to make another request to get updated data.
 This is a synchronous process, where you must ask for data, wait for the server to respond, and repeat the process if you want fresh data. For real-time updates, this means you'd need to continually call the server (polling), which is inefficient and can lead to performance issues.
-While get is perfectly fine for fetching data when you initially load your app or periodically (e.g., refresh button), it’s not ideal for continuously receiving updates in real-time.
-2. Why use Pub/Sub in your case?
-Since you're trying to get real-time updates of AQI (PM2.5) values from Redis, Pub/Sub fits perfectly for your use case. It allows your app to listen for changes as they happen in real-time without constantly sending requests to the server. This is much more efficient and scales better.
 
-if i use get, it will send a request only when i click on that current data button,
-whereas with pubsub , it automatically fetches updated data, neednt click on button or refresh page 
 
