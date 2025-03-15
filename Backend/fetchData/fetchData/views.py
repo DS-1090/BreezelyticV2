@@ -67,8 +67,8 @@ def fetchrecords(request):
 
 loc='hyderabad'
 
-def sendtoApp(requests):
-    print('connected')
+def sendtoApp():
+    print('connected to api')
     url = f"https://api.waqi.info/feed/{loc}/?token={api_key}"
     response = requests.get(url)
     if(response.status_code != 200):
