@@ -14,7 +14,7 @@ headers = {
 
 #FLOW
     #KAFKA-> REDIS->FLUTTER: current data
-    #RECORDS->csv, CASSANDRA DB->SPARK->FLUTTER: historical data
+    #RECORDS->csv, CASSANDRA DB->SPARK->FLUTTER: historical Data
 
 #FOR DB UPDATES
 
@@ -67,7 +67,7 @@ def fetchrecords(request):
 
 loc='hyderabad'
 
-def sendtoApp(request):
+def sendtoApp(requests):
     print('connected')
     url = f"https://api.waqi.info/feed/{loc}/?token={api_key}"
     response = requests.get(url)
