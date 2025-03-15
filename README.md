@@ -36,7 +36,7 @@ The system operates as follows:
 6. The data is then sent back to the mobile app for display of records.
 7. All services communicate within the **Docker Compose Network** (`airnet`).
 
-Flow:
+## Flow:
 
 ![Screenshot 2025-03-15 185010](https://github.com/user-attachments/assets/76dd352a-77f1-4441-a3f5-01efc968e99d)
 
