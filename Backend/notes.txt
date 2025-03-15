@@ -328,7 +328,6 @@ Redis is an incredibly fast, versatile, and scalable solution for caching, real-
 
 REDIS AND KAFKA
 
-Redis and Kafka serve different purposes, though there is some overlap in their use cases. Whether you need both or just one depends on your requirements. Let’s break it down:
 
 1. Redis vs Kafka: Key Differences
 Feature
