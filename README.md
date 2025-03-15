@@ -28,8 +28,8 @@ This project is also an exploration of big data handling technologies.
 
 ## Workflow
 The system operates as follows:
-1. Django fetches real-time data from `https://aqicn.org/` and sends it to Kafka Producer.
-2. The Kafka Consumer stores the data in Redis for quick access.
+1. Django fetches real-time data from `https://aqicn.org/` and sends it to **Kafka Producer**.
+2. The **Kafka Consumer** stores the data in Redis for quick access.
 3. The **mobile app (Flutter)** requests PM2.5 data current data from the **Redis**.
 4. Django fetches records data from `https://aqicn.org/` and stores it as a CSV file.
 5. **Apache Spark** processes and retrieves records from CSV .
